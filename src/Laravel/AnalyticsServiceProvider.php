@@ -2,6 +2,7 @@
 
 namespace TPG\Analytics\Laravel;
 
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
@@ -64,18 +65,21 @@ class AnalyticsServiceProvider extends ServiceProvider
 
         EncryptCookies::except(VisitorCookie::DEFAULT_NAME);
 
-        $this->app->terminating(fn () => $this->flush());
+        $this->app->terminating(fn (Container $container) => $this->flush($container));
 
-        Event::listen([JobProcessed::class, JobFailed::class], fn () => $this->flush());
+        Event::listen([JobProcessed::class, JobFailed::class], fn () => $this->flush(Container::getInstance()));
     }
 
     /**
      * Send the queued events if anything was tracked.
+     *
+     * The container is the one handling the request, not the one the provider booted with. Octane runs each
+     * request in a copy of the application, so the client the request used only exists in that copy.
      */
-    protected function flush(): void
+    protected function flush(Container $container): void
     {
-        if ($this->app->resolved(Client::class)) {
-            $this->app->make(Client::class)->flush();
+        if ($container->resolved(Client::class)) {
+            $container->make(Client::class)->flush();
         }
     }
 }

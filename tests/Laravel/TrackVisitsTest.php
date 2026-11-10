@@ -1,9 +1,12 @@
 <?php
 
 use Illuminate\Auth\GenericUser;
+use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Route;
+use TPG\Analytics\Client;
 use TPG\Analytics\Laravel\Analytics;
 use TPG\Analytics\Laravel\TrackVisits;
+use TPG\Analytics\Transport\FakeTransport;
 use TPG\Analytics\Transport\Response;
 
 /**
@@ -133,4 +136,22 @@ test('nothing is tracked without a key', function () {
     $this->get('/pricing')->assertCookieMissing('_a_vid');
 
     expect($transport->requests)->toBeEmpty();
+});
+
+test('events are sent when the request ran in a copy of the application, as under Octane', function () {
+    $transport = new FakeTransport;
+    $sandbox = clone $this->app;
+    $sandbox->instance('app', $sandbox);
+    $sandbox->instance(Container::class, $sandbox);
+    $sandbox->instance(Client::class, new Client(
+        key: 'ak_fake',
+        endpoint: 'https://analytics.invalid/api/v1',
+        flushOnShutdown: false,
+        transport: $transport,
+    ));
+
+    $sandbox->make(Client::class)->event('signup');
+    $sandbox->terminate();
+
+    expect($transport->events())->toHaveCount(1);
 });
