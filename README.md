@@ -17,6 +17,8 @@ ANALYTICS_KEY=ak_...
 ANALYTICS_ENDPOINT=https://analytics.example.com/api/v1
 ```
 
+If the analytics app runs locally with a self-signed certificate, set `ANALYTICS_VERIFY_SSL=false` in development. Leave it on in production.
+
 Add the middleware to record every page view automatically:
 
 ```php

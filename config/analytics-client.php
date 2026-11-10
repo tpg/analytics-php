@@ -14,7 +14,7 @@ return [
 
     'key' => env('ANALYTICS_KEY'),
 
-    'endpoint' => env('ANALYTICS_ENDPOINT'),
+    'endpoint' => env('ANALYTICS_ENDPOINT', 'https://analytics.thepublicgood.dev/api/v1'),
 
     /*
     |--------------------------------------------------------------------------
@@ -26,6 +26,18 @@ return [
     */
 
     'enabled' => (bool) env('ANALYTICS_ENABLED', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Verify SSL
+    |--------------------------------------------------------------------------
+    |
+    | Turn this off in local development when the analytics app is served
+    | with a self-signed certificate. Always leave it on in production.
+    |
+    */
+
+    'verify_ssl' => (bool) env('ANALYTICS_VERIFY_SSL', true),
 
     /*
     |--------------------------------------------------------------------------
