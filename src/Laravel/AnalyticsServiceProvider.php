@@ -2,6 +2,7 @@
 
 namespace TPG\Analytics\Laravel;
 
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use TPG\Analytics\Client;
 use TPG\Analytics\Exceptions\AnalyticsException;
+use TPG\Analytics\Transport\CurlTransport;
 use TPG\Analytics\Visitor;
 use TPG\Analytics\VisitorCookie;
 
@@ -28,13 +30,14 @@ class AnalyticsServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../../config/analytics-client.php', 'analytics-client');
 
         $this->app->scoped(Client::class, function (Application $app) {
-            /** @var array{key: ?string, endpoint: ?string, enabled: bool, identify_users: bool} $config */
+            /** @var array{key: ?string, endpoint: ?string, enabled: bool, identify_users: bool, verify_ssl: bool} $config */
             $config = $app->make('config')->get('analytics-client');
 
             $client = new Client(
                 key: (string) $config['key'],
                 endpoint: (string) $config['endpoint'],
                 flushOnShutdown: false,
+                transport: new CurlTransport(verifySsl: $config['verify_ssl']),
                 onError: fn (AnalyticsException $exception, array $batch) => Log::warning('Analytics dropped '.count($batch).' event(s).', ['exception' => $exception]),
                 enabled: $config['enabled'] && filled($config['key']) && filled($config['endpoint']),
             );
@@ -64,18 +67,21 @@ class AnalyticsServiceProvider extends ServiceProvider
 
         EncryptCookies::except(VisitorCookie::DEFAULT_NAME);
 
-        $this->app->terminating(fn () => $this->flush());
+        $this->app->terminating(fn (Container $container) => $this->flush($container));
 
-        Event::listen([JobProcessed::class, JobFailed::class], fn () => $this->flush());
+        Event::listen([JobProcessed::class, JobFailed::class], fn () => $this->flush(Container::getInstance()));
     }
 
     /**
      * Send the queued events if anything was tracked.
+     *
+     * The container is the one handling the request, not the one the provider booted with. Octane runs each
+     * request in a copy of the application, so the client the request used only exists in that copy.
      */
-    protected function flush(): void
+    protected function flush(Container $container): void
     {
-        if ($this->app->resolved(Client::class)) {
-            $this->app->make(Client::class)->flush();
+        if ($container->resolved(Client::class)) {
+            $container->make(Client::class)->flush();
         }
     }
 }

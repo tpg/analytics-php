@@ -9,6 +9,7 @@ final class CurlTransport implements Transport
     public function __construct(
         private readonly float $timeout = 2.0,
         private readonly float $connectTimeout = 1.0,
+        private readonly bool $verifySsl = true,
     ) {
         //
     }
@@ -35,6 +36,8 @@ final class CurlTransport implements Transport
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT_MS => (int) ($this->timeout * 1000),
             CURLOPT_CONNECTTIMEOUT_MS => (int) ($this->connectTimeout * 1000),
+            CURLOPT_SSL_VERIFYPEER => $this->verifySsl,
+            CURLOPT_SSL_VERIFYHOST => $this->verifySsl ? 2 : 0,
             CURLOPT_HTTPHEADER => array_map(fn (string $name, string $value) => "{$name}: {$value}", array_keys($headers), $headers),
         ];
 
