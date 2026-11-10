@@ -1,6 +1,6 @@
 <?php
 
-namespace ThePublicGood\Analytics\Laravel;
+namespace TPG\Analytics\Laravel;
 
 use Closure;
 use Illuminate\Contracts\Cache\Repository as Cache;
@@ -9,10 +9,10 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
-use ThePublicGood\Analytics\Client;
-use ThePublicGood\Analytics\Exceptions\AnalyticsException;
-use ThePublicGood\Analytics\PropertySettings;
-use ThePublicGood\Analytics\VisitorCookie;
+use TPG\Analytics\Client;
+use TPG\Analytics\Exceptions\AnalyticsException;
+use TPG\Analytics\PropertySettings;
+use TPG\Analytics\VisitorCookie;
 
 /**
  * Records page views or API requests automatically, and sets the visitor cookie for persistent properties.

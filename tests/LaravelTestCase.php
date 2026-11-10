@@ -3,7 +3,7 @@
 namespace Tests;
 
 use Orchestra\Testbench\TestCase;
-use ThePublicGood\Analytics\Laravel\AnalyticsServiceProvider;
+use TPG\Analytics\Laravel\AnalyticsServiceProvider;
 
 abstract class LaravelTestCase extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace ThePublicGood\Analytics\Exceptions;
+namespace TPG\Analytics\Exceptions;
 
 /**
  * The request never reached the API, or no response came back.

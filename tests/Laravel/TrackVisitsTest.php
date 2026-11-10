@@ -2,9 +2,9 @@
 
 use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\Route;
-use ThePublicGood\Analytics\Laravel\Analytics;
-use ThePublicGood\Analytics\Laravel\TrackVisits;
-use ThePublicGood\Analytics\Transport\Response;
+use TPG\Analytics\Laravel\Analytics;
+use TPG\Analytics\Laravel\TrackVisits;
+use TPG\Analytics\Transport\Response;
 
 /**
  * A ping response for a property with the given visitor identification.

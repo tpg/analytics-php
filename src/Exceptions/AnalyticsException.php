@@ -1,6 +1,6 @@
 <?php
 
-namespace ThePublicGood\Analytics\Exceptions;
+namespace TPG\Analytics\Exceptions;
 
 use RuntimeException;
 

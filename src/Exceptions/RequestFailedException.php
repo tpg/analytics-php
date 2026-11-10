@@ -1,8 +1,8 @@
 <?php
 
-namespace ThePublicGood\Analytics\Exceptions;
+namespace TPG\Analytics\Exceptions;
 
-use ThePublicGood\Analytics\Transport\Response;
+use TPG\Analytics\Transport\Response;
 
 /**
  * The API answered with an error.

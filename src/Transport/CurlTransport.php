@@ -1,8 +1,8 @@
 <?php
 
-namespace ThePublicGood\Analytics\Transport;
+namespace TPG\Analytics\Transport;
 
-use ThePublicGood\Analytics\Exceptions\TransportException;
+use TPG\Analytics\Exceptions\TransportException;
 
 final class CurlTransport implements Transport
 {

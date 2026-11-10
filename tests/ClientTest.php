@@ -1,12 +1,12 @@
 <?php
 
-use ThePublicGood\Analytics\Client;
-use ThePublicGood\Analytics\Exceptions\AnalyticsException;
-use ThePublicGood\Analytics\Exceptions\RequestFailedException;
-use ThePublicGood\Analytics\Exceptions\TransportException;
-use ThePublicGood\Analytics\Transport\FakeTransport;
-use ThePublicGood\Analytics\Transport\Response;
-use ThePublicGood\Analytics\Visitor;
+use TPG\Analytics\Client;
+use TPG\Analytics\Exceptions\AnalyticsException;
+use TPG\Analytics\Exceptions\RequestFailedException;
+use TPG\Analytics\Exceptions\TransportException;
+use TPG\Analytics\Transport\FakeTransport;
+use TPG\Analytics\Transport\Response;
+use TPG\Analytics\Visitor;
 
 /**
  * Make a client that sends to the given fake transport.

@@ -1,6 +1,6 @@
 <?php
 
-namespace ThePublicGood\Analytics;
+namespace TPG\Analytics;
 
 use DateTimeImmutable;
 use DateTimeInterface;

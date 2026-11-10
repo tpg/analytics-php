@@ -1,10 +1,10 @@
 <?php
 
-namespace ThePublicGood\Analytics\Laravel;
+namespace TPG\Analytics\Laravel;
 
 use Illuminate\Http\Request;
-use ThePublicGood\Analytics\Visitor;
-use ThePublicGood\Analytics\VisitorCookie;
+use TPG\Analytics\Visitor;
+use TPG\Analytics\VisitorCookie;
 
 /**
  * Reads the visitor from a Laravel request.

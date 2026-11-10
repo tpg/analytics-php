@@ -1,6 +1,6 @@
 <?php
 
-namespace ThePublicGood\Analytics\Laravel;
+namespace TPG\Analytics\Laravel;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -10,10 +10,10 @@ use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
-use ThePublicGood\Analytics\Client;
-use ThePublicGood\Analytics\Exceptions\AnalyticsException;
-use ThePublicGood\Analytics\Visitor;
-use ThePublicGood\Analytics\VisitorCookie;
+use TPG\Analytics\Client;
+use TPG\Analytics\Exceptions\AnalyticsException;
+use TPG\Analytics\Visitor;
+use TPG\Analytics\VisitorCookie;
 
 class AnalyticsServiceProvider extends ServiceProvider
 {

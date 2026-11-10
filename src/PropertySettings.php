@@ -1,6 +1,6 @@
 <?php
 
-namespace ThePublicGood\Analytics;
+namespace TPG\Analytics;
 
 /**
  * How the property a key belongs to wants client libraries to behave, from the ping API.

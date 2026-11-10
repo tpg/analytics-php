@@ -1,6 +1,6 @@
 <?php
 
-namespace ThePublicGood\Analytics\Transport;
+namespace TPG\Analytics\Transport;
 
 final readonly class Response
 {

@@ -1,23 +1,23 @@
 <?php
 
-namespace ThePublicGood\Analytics\Laravel;
+namespace TPG\Analytics\Laravel;
 
 use Illuminate\Support\Facades\Facade;
-use ThePublicGood\Analytics\Client;
-use ThePublicGood\Analytics\Exceptions\TransportException;
-use ThePublicGood\Analytics\Transport\FakeTransport;
-use ThePublicGood\Analytics\Transport\Response;
+use TPG\Analytics\Client;
+use TPG\Analytics\Exceptions\TransportException;
+use TPG\Analytics\Transport\FakeTransport;
+use TPG\Analytics\Transport\Response;
 
 /**
- * @method static void pageview(string $url, ?\ThePublicGood\Analytics\Visitor $visitor = null, ?string $referrer = null, array<string, string|int|float|bool|null> $properties = [], ?\DateTimeInterface $occurredAt = null)
- * @method static void screenview(string $screen, ?\ThePublicGood\Analytics\Visitor $visitor = null, array<string, string|int|float|bool|null> $properties = [], ?\DateTimeInterface $occurredAt = null)
- * @method static void event(string $name, array<string, string|int|float|bool|null> $properties = [], ?\ThePublicGood\Analytics\Visitor $visitor = null, ?string $url = null, ?\DateTimeInterface $occurredAt = null)
- * @method static void request(string $method, string $url, int $status, int $durationMs, ?\ThePublicGood\Analytics\Visitor $visitor = null, ?string $route = null, array<string, string|int|float|bool|null> $properties = [], ?\DateTimeInterface $occurredAt = null)
- * @method static void track(\ThePublicGood\Analytics\Event $event)
+ * @method static void pageview(string $url, ?\TPG\Analytics\Visitor $visitor = null, ?string $referrer = null, array<string, string|int|float|bool|null> $properties = [], ?\DateTimeInterface $occurredAt = null)
+ * @method static void screenview(string $screen, ?\TPG\Analytics\Visitor $visitor = null, array<string, string|int|float|bool|null> $properties = [], ?\DateTimeInterface $occurredAt = null)
+ * @method static void event(string $name, array<string, string|int|float|bool|null> $properties = [], ?\TPG\Analytics\Visitor $visitor = null, ?string $url = null, ?\DateTimeInterface $occurredAt = null)
+ * @method static void request(string $method, string $url, int $status, int $durationMs, ?\TPG\Analytics\Visitor $visitor = null, ?string $route = null, array<string, string|int|float|bool|null> $properties = [], ?\DateTimeInterface $occurredAt = null)
+ * @method static void track(\TPG\Analytics\Event $event)
  * @method static bool flush()
- * @method static list<\ThePublicGood\Analytics\Event> queued()
- * @method static \ThePublicGood\Analytics\Visitor visitor(?\ThePublicGood\Analytics\Visitor $visitor = null)
- * @method static \ThePublicGood\Analytics\PropertySettings ping()
+ * @method static list<\TPG\Analytics\Event> queued()
+ * @method static \TPG\Analytics\Visitor visitor(?\TPG\Analytics\Visitor $visitor = null)
+ * @method static \TPG\Analytics\PropertySettings ping()
  *
  * @see Client
  */

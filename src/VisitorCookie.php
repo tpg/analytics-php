@@ -1,6 +1,6 @@
 <?php
 
-namespace ThePublicGood\Analytics;
+namespace TPG\Analytics;
 
 /**
  * The first-party cookie that recognises returning visitors on properties with persistent identification.

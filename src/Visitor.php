@@ -1,6 +1,6 @@
 <?php
 
-namespace ThePublicGood\Analytics;
+namespace TPG\Analytics;
 
 /**
  * The person an event belongs to, as your server sees them.

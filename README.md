@@ -21,7 +21,7 @@ Add the middleware to record every page view automatically:
 
 ```php
 // bootstrap/app.php
-use ThePublicGood\Analytics\Laravel\TrackVisits;
+use TPG\Analytics\Laravel\TrackVisits;
 
 ->withMiddleware(function (Middleware $middleware) {
     $middleware->web(append: [TrackVisits::class]);
@@ -33,7 +33,7 @@ Page views are successful `GET` requests that return HTML or an Inertia page. Er
 Record custom events with the facade. The visitor comes from the current request:
 
 ```php
-use ThePublicGood\Analytics\Laravel\Analytics;
+use TPG\Analytics\Laravel\Analytics;
 
 Analytics::event('signup', ['plan' => 'pro']);
 ```
@@ -59,8 +59,8 @@ expect(array_column($analytics->events(), 'name'))->toContain('signup');
 ## Any PHP app
 
 ```php
-use ThePublicGood\Analytics\Client;
-use ThePublicGood\Analytics\Visitor;
+use TPG\Analytics\Client;
+use TPG\Analytics\Visitor;
 
 $analytics = new Client(
     key: 'ak_...',
@@ -83,7 +83,7 @@ Analytics uses the visitor's IP address and user agent to work out their locatio
 On properties with **persistent** visitor identification, give each visitor a first-party cookie so they are recognised when they come back:
 
 ```php
-use ThePublicGood\Analytics\VisitorCookie;
+use TPG\Analytics\VisitorCookie;
 
 $settings = $analytics->ping(); // Cache this.
 

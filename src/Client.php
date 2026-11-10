@@ -1,15 +1,15 @@
 <?php
 
-namespace ThePublicGood\Analytics;
+namespace TPG\Analytics;
 
 use Closure;
 use DateTimeInterface;
-use ThePublicGood\Analytics\Exceptions\AnalyticsException;
-use ThePublicGood\Analytics\Exceptions\RequestFailedException;
-use ThePublicGood\Analytics\Exceptions\TransportException;
-use ThePublicGood\Analytics\Transport\CurlTransport;
-use ThePublicGood\Analytics\Transport\Transport;
 use Throwable;
+use TPG\Analytics\Exceptions\AnalyticsException;
+use TPG\Analytics\Exceptions\RequestFailedException;
+use TPG\Analytics\Exceptions\TransportException;
+use TPG\Analytics\Transport\CurlTransport;
+use TPG\Analytics\Transport\Transport;
 
 /**
  * Queues events in memory and sends them to the analytics API in batches.

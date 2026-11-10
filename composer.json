@@ -1,6 +1,6 @@
 {
     "name": "thepublicgood/analytics",
-    "description": "Send page views, requests and custom events to The Public Good Analytics from PHP and Laravel.",
+    "description": "Send page views, requests and custom events to thepublicgood.analytics from PHP and Laravel.",
     "type": "library",
     "license": "MIT",
     "keywords": ["analytics", "laravel", "privacy"],
@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "ThePublicGood\\Analytics\\": "src/"
+            "TPG\\Analytics\\": "src/"
         }
     },
     "autoload-dev": {
@@ -32,10 +32,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "ThePublicGood\\Analytics\\Laravel\\AnalyticsServiceProvider"
+                "Thepublicgood\\Analytics\\Laravel\\AnalyticsServiceProvider"
             ],
             "aliases": {
-                "Analytics": "ThePublicGood\\Analytics\\Laravel\\Analytics"
+                "Analytics": "TPG\\Analytics\\Laravel\\Analytics"
             }
         }
     },
