@@ -1,4 +1,4 @@
-# The Public Good Analytics for PHP
+# thepublicood.analytics for PHP
 
 Send page views, API requests and custom events to The Public Good Analytics from your server. Nothing runs in the browser.
 
