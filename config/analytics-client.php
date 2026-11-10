@@ -14,7 +14,7 @@ return [
 
     'key' => env('ANALYTICS_KEY'),
 
-    'endpoint' => env('ANALYTICS_ENDPOINT', 'https://analytics.thepublicgood.dev/api/v1'),
+    'endpoint' => env('ANALYTICS_ENDPOINT', 'https://visits.thepublicgood.dev/api/v1'),
 
     /*
     |--------------------------------------------------------------------------
