@@ -32,7 +32,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Thepublicgood\\Analytics\\Laravel\\AnalyticsServiceProvider"
+                "TPG\\Analytics\\Laravel\\AnalyticsServiceProvider"
             ],
             "aliases": {
                 "Analytics": "TPG\\Analytics\\Laravel\\Analytics"
