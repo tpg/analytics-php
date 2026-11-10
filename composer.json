@@ -1,0 +1,55 @@
+{
+    "name": "thepublicgood/analytics",
+    "description": "Send page views, requests and custom events to The Public Good Analytics from PHP and Laravel.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["analytics", "laravel", "privacy"],
+    "require": {
+        "php": "^8.3",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.18",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.0",
+        "phpstan/phpstan": "^2.1"
+    },
+    "suggest": {
+        "ext-zlib": "Compresses event batches before they are sent.",
+        "illuminate/support": "Adds the Laravel service provider, facade and request tracking middleware."
+    },
+    "autoload": {
+        "psr-4": {
+            "ThePublicGood\\Analytics\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ThePublicGood\\Analytics\\Laravel\\AnalyticsServiceProvider"
+            ],
+            "aliases": {
+                "Analytics": "ThePublicGood\\Analytics\\Laravel\\Analytics"
+            }
+        }
+    },
+    "scripts": {
+        "test": "pest",
+        "lint": "pint",
+        "analyse": "phpstan analyse"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
