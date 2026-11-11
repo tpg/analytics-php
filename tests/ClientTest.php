@@ -1,19 +1,19 @@
 <?php
 
-use TPG\Analytics\Client;
-use TPG\Analytics\Exceptions\AnalyticsException;
-use TPG\Analytics\Exceptions\RequestFailedException;
-use TPG\Analytics\Exceptions\TransportException;
-use TPG\Analytics\Transport\FakeTransport;
-use TPG\Analytics\Transport\Response;
-use TPG\Analytics\Visitor;
+use TPG\Trace\Client;
+use TPG\Trace\Exceptions\RequestFailedException;
+use TPG\Trace\Exceptions\TraceException;
+use TPG\Trace\Exceptions\TransportException;
+use TPG\Trace\Transport\FakeTransport;
+use TPG\Trace\Transport\Response;
+use TPG\Trace\Visitor;
 
 /**
  * Make a client that sends to the given fake transport.
  */
 function fakeClient(FakeTransport $transport, mixed ...$options): Client
 {
-    return new Client(...['key' => 'ak_test', 'endpoint' => 'https://analytics.test/api/v1/', 'flushOnShutdown' => false, 'transport' => $transport, ...$options]);
+    return new Client(...['key' => 'ak_test', 'endpoint' => 'https://trace.test/api/v1/', 'flushOnShutdown' => false, 'transport' => $transport, ...$options]);
 }
 
 test('queued events are sent together when flushed', function () {
@@ -34,7 +34,7 @@ test('queued events are sent together when flushed', function () {
     $request = $transport->requests[0];
 
     expect($request['method'])->toBe('POST')
-        ->and($request['url'])->toBe('https://analytics.test/api/v1/events')
+        ->and($request['url'])->toBe('https://trace.test/api/v1/events')
         ->and($request['headers'])->toMatchArray(['Authorization' => 'Bearer ak_test', 'Content-Type' => 'application/json']);
 
     [$pageview, $event, $apiRequest, $screenview] = $transport->events();
@@ -99,7 +99,7 @@ test('batches are retried after errors that might go away', function (Response|T
 test('batches the API rejects are reported and dropped without a retry', function () {
     $transport = new FakeTransport(new Response(422, '{"message":"The events.0.url field must be a valid URL."}'));
     $reported = [];
-    $client = fakeClient($transport, onError: function (AnalyticsException $exception, array $batch) use (&$reported) {
+    $client = fakeClient($transport, onError: function (TraceException $exception, array $batch) use (&$reported) {
         $reported[] = [$exception, $batch];
     });
 
@@ -110,7 +110,7 @@ test('batches the API rejects are reported and dropped without a retry', functio
         ->and($client->queued())->toBeEmpty()
         ->and($reported)->toHaveCount(1)
         ->and($reported[0][0])->toBeInstanceOf(RequestFailedException::class)
-        ->and($reported[0][0]->getMessage())->toBe('The analytics API responded with 422: The events.0.url field must be a valid URL.')
+        ->and($reported[0][0]->getMessage())->toBe('The Trace API responded with 422: The events.0.url field must be a valid URL.')
         ->and($reported[0][1])->toHaveCount(1);
 });
 
@@ -181,12 +181,12 @@ test('ping returns the property settings', function () {
     expect($settings->name)->toBe('Storefront')
         ->and($settings->persistentVisitors)->toBeTrue()
         ->and($settings->visitorCookie)->toBe('_vid')
-        ->and($transport->requests[0]['url'])->toBe('https://analytics.test/api/v1/ping');
+        ->and($transport->requests[0]['url'])->toBe('https://trace.test/api/v1/ping');
 });
 
 test('ping throws when the key is wrong', function () {
     fakeClient(new FakeTransport(new Response(401, '{"message":"Unauthenticated."}')))->ping();
-})->throws(RequestFailedException::class, 'The analytics API responded with 401: Unauthenticated.');
+})->throws(RequestFailedException::class, 'The Trace API responded with 401: Unauthenticated.');
 
 test('the visitor is read from the request globals', function () {
     $visitor = Visitor::fromGlobals(
@@ -204,3 +204,16 @@ test('the visitor is read from the request globals', function () {
 test('visitor cookies that were tampered with are ignored', function () {
     expect(Visitor::fromGlobals(server: [], cookies: ['_a_vid' => 'someone-else'])->anonymousId)->toBeNull();
 });
+
+test('events go to the hosted endpoint when none is given', function (string $endpoint) {
+    $transport = new FakeTransport;
+    $client = new Client(key: 'ak_test', endpoint: $endpoint, flushOnShutdown: false, transport: $transport);
+
+    $client->event('signup');
+    $client->flush();
+
+    expect($transport->requests[0]['url'])->toBe('https://trace.thepublicgood.dev/api/v1/events');
+})->with([
+    'default' => [Client::DEFAULT_ENDPOINT],
+    'empty' => [''],
+]);

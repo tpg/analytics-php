@@ -1,18 +1,18 @@
 {
-    "name": "thepublicgood/analytics",
-    "description": "Send page views, requests and custom events to thepublicgood.analytics from PHP and Laravel.",
+    "name": "thepublicgood/trace",
+    "description": "Send page views, requests and custom events to thepublicgood.trace from PHP and Laravel.",
     "type": "library",
     "license": "MIT",
     "keywords": ["analytics", "laravel", "privacy"],
     "require": {
-        "php": "^8.3",
+        "php": "^8.5",
         "ext-curl": "*",
         "ext-json": "*"
     },
     "require-dev": {
         "laravel/pint": "^1.18",
         "orchestra/testbench": "^11.0",
-        "pestphp/pest": "^4.0",
+        "pestphp/pest": "^5.0",
         "phpstan/phpstan": "^2.1"
     },
     "suggest": {
@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "TPG\\Analytics\\": "src/"
+            "TPG\\Trace\\": "src/"
         }
     },
     "autoload-dev": {
@@ -32,10 +32,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "TPG\\Analytics\\Laravel\\AnalyticsServiceProvider"
+                "TPG\\Trace\\Laravel\\TraceServiceProvider"
             ],
             "aliases": {
-                "Analytics": "TPG\\Analytics\\Laravel\\Analytics"
+                "Trace": "TPG\\Trace\\Laravel\\Trace"
             }
         }
     },

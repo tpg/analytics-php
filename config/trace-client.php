@@ -7,14 +7,15 @@ return [
     | Property Key and Endpoint
     |--------------------------------------------------------------------------
     |
-    | Create a key on the property's Keys page. The endpoint is shown beside
-    | it, such as "https://analytics.example.com/api/v1".
+    | Create a key on the property's Keys page. Only set the endpoint when
+    | Trace is hosted somewhere else. It is shown beside the key, such as
+    | "https://trace.example.com/api/v1".
     |
     */
 
-    'key' => env('ANALYTICS_KEY'),
+    'key' => env('TRACE_KEY'),
 
-    'endpoint' => env('ANALYTICS_ENDPOINT', 'https://visits.thepublicgood.dev/api/v1'),
+    'endpoint' => env('TRACE_ENDPOINT', 'https://trace.thepublicgood.dev/api/v1'),
 
     /*
     |--------------------------------------------------------------------------
@@ -25,19 +26,19 @@ return [
     |
     */
 
-    'enabled' => (bool) env('ANALYTICS_ENABLED', true),
+    'enabled' => (bool) env('TRACE_ENABLED', true),
 
     /*
     |--------------------------------------------------------------------------
     | Verify SSL
     |--------------------------------------------------------------------------
     |
-    | Turn this off in local development when the analytics app is served
+    | Turn this off in local development when the Trace app is served
     | with a self-signed certificate. Always leave it on in production.
     |
     */
 
-    'verify_ssl' => (bool) env('ANALYTICS_VERIFY_SSL', true),
+    'verify_ssl' => (bool) env('TRACE_VERIFY_SSL', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -49,7 +50,7 @@ return [
     |
     */
 
-    'track' => env('ANALYTICS_TRACK', 'pageviews'),
+    'track' => env('TRACE_TRACK', 'pageviews'),
 
     'ignore' => [
         'up',
@@ -67,11 +68,11 @@ return [
     |--------------------------------------------------------------------------
     |
     | Send the signed-in user's ID with each event, so the same person is
-    | counted once across devices. Analytics hashes it before storing it.
+    | counted once across devices. Trace hashes it before storing it.
     |
     */
 
-    'identify_users' => (bool) env('ANALYTICS_IDENTIFY_USERS', false),
+    'identify_users' => (bool) env('TRACE_IDENTIFY_USERS', false),
 
     /*
     |--------------------------------------------------------------------------

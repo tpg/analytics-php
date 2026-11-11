@@ -1,6 +1,6 @@
 <?php
 
-namespace TPG\Analytics\Laravel;
+namespace TPG\Trace\Laravel;
 
 use Closure;
 use Illuminate\Contracts\Cache\Repository as Cache;
@@ -9,10 +9,10 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
-use TPG\Analytics\Client;
-use TPG\Analytics\Exceptions\AnalyticsException;
-use TPG\Analytics\PropertySettings;
-use TPG\Analytics\VisitorCookie;
+use TPG\Trace\Client;
+use TPG\Trace\Exceptions\TraceException;
+use TPG\Trace\PropertySettings;
+use TPG\Trace\VisitorCookie;
 
 /**
  * Records page views or API requests automatically, and sets the visitor cookie for persistent properties.
@@ -39,7 +39,7 @@ class TrackVisits
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $request->attributes->set('analytics-client.started-at', microtime(true));
+        $request->attributes->set('trace-client.started-at', microtime(true));
 
         if (! $this->enabled() || ! $this->shouldTrack($request)) {
             return $next($request);
@@ -83,7 +83,7 @@ class TrackVisits
             return;
         }
 
-        if ($this->config->get('analytics-client.track') === 'requests') {
+        if ($this->config->get('trace-client.track') === 'requests') {
             $this->client->request(
                 method: $request->method(),
                 url: $request->fullUrl(),
@@ -132,7 +132,7 @@ class TrackVisits
     protected function shouldTrack(Request $request): bool
     {
         /** @var list<string> $ignore */
-        $ignore = $this->config->get('analytics-client.ignore', []);
+        $ignore = $this->config->get('trace-client.ignore', []);
 
         return $ignore === [] || ! $request->is(...$ignore);
     }
@@ -142,7 +142,7 @@ class TrackVisits
      */
     protected function enabled(): bool
     {
-        return $this->config->get('analytics-client.enabled') && filled($this->config->get('analytics-client.key')) && filled($this->config->get('analytics-client.endpoint'));
+        return $this->config->get('trace-client.enabled') && filled($this->config->get('trace-client.key'));
     }
 
     /**
@@ -150,7 +150,7 @@ class TrackVisits
      */
     protected function settings(): PropertySettings
     {
-        $cacheKey = 'analytics-client:settings:'.hash('xxh128', (string) $this->config->get('analytics-client.key'));
+        $cacheKey = 'trace-client:settings:'.hash('xxh128', (string) $this->config->get('trace-client.key'));
         $cached = $this->cache->get($cacheKey);
 
         if (is_array($cached)) {
@@ -159,8 +159,8 @@ class TrackVisits
 
         try {
             $settings = $this->client->ping();
-            $seconds = (int) $this->config->get('analytics-client.settings_cache_seconds', 3600);
-        } catch (AnalyticsException) {
+            $seconds = (int) $this->config->get('trace-client.settings_cache_seconds', 3600);
+        } catch (TraceException) {
             $settings = new PropertySettings(name: '', type: '', persistentVisitors: false);
             $seconds = self::FAILED_LOOKUP_CACHE_SECONDS;
         }
@@ -185,7 +185,7 @@ class TrackVisits
      */
     protected function durationMs(Request $request): int
     {
-        $startedAt = $request->attributes->get('analytics-client.started-at');
+        $startedAt = $request->attributes->get('trace-client.started-at');
         $startedAt = is_float($startedAt) ? $startedAt : (defined('LARAVEL_START') ? LARAVEL_START : microtime(true));
 
         return (int) round((microtime(true) - $startedAt) * 1000);

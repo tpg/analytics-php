@@ -1,11 +1,11 @@
 <?php
 
-namespace TPG\Analytics\Transport;
+namespace TPG\Trace\Transport;
 
-use TPG\Analytics\Exceptions\TransportException;
+use TPG\Trace\Exceptions\TransportException;
 
 /**
- * Sends HTTP requests to the analytics API.
+ * Sends HTTP requests to the Trace API.
  */
 interface Transport
 {

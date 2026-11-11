@@ -1,20 +1,20 @@
 <?php
 
-namespace TPG\Analytics;
+namespace TPG\Trace;
 
 use Closure;
 use DateTimeInterface;
 use Throwable;
-use TPG\Analytics\Exceptions\AnalyticsException;
-use TPG\Analytics\Exceptions\RequestFailedException;
-use TPG\Analytics\Exceptions\TransportException;
-use TPG\Analytics\Transport\CurlTransport;
-use TPG\Analytics\Transport\Transport;
+use TPG\Trace\Exceptions\RequestFailedException;
+use TPG\Trace\Exceptions\TraceException;
+use TPG\Trace\Exceptions\TransportException;
+use TPG\Trace\Transport\CurlTransport;
+use TPG\Trace\Transport\Transport;
 
 /**
- * Queues events in memory and sends them to the analytics API in batches.
+ * Queues events in memory and sends them to the Trace API in batches.
  *
- * Tracking never throws. Failed batches go to the error handler, so analytics can't break your app.
+ * Tracking never throws. Failed batches go to the error handler, so Trace can't break your app.
  */
 class Client
 {
@@ -24,6 +24,11 @@ class Client
      * The most events the API accepts in one request.
      */
     public const int MAX_BATCH_SIZE = 100;
+
+    /**
+     * The API endpoint of the hosted Trace app.
+     */
+    public const string DEFAULT_ENDPOINT = 'https://trace.thepublicgood.dev/api/v1';
 
     /**
      * Bodies larger than this many bytes are gzipped.
@@ -42,7 +47,7 @@ class Client
     protected readonly Transport $transport;
 
     /**
-     * @var (Closure(AnalyticsException, list<Event>): void)|null
+     * @var (Closure(TraceException, list<Event>): void)|null
      */
     protected ?Closure $onError;
 
@@ -55,17 +60,17 @@ class Client
 
     /**
      * @param  string  $key  The property key, starting with "ak_".
-     * @param  string  $endpoint  The API endpoint shown next to the key, such as "https://analytics.example.com/api/v1".
+     * @param  string  $endpoint  The API endpoint, only needed when Trace is hosted somewhere other than DEFAULT_ENDPOINT.
      * @param  int  $batchSize  How many events to queue before they are sent.
      * @param  int  $maxQueueSize  The most events to hold. The oldest are dropped beyond it.
      * @param  int  $retries  How many times a batch is resent after a network error, rate limit or server error.
      * @param  bool  $flushOnShutdown  Whether queued events are sent when the PHP process ends.
-     * @param  (callable(AnalyticsException, list<Event>): void)|null  $onError  Called with each batch that couldn't be sent.
+     * @param  (callable(TraceException, list<Event>): void)|null  $onError  Called with each batch that couldn't be sent.
      * @param  bool  $enabled  Set to false to queue nothing and send nothing, such as in local development.
      */
     public function __construct(
         protected readonly string $key,
-        string $endpoint,
+        string $endpoint = self::DEFAULT_ENDPOINT,
         protected readonly int $batchSize = self::MAX_BATCH_SIZE,
         protected readonly int $maxQueueSize = 1000,
         protected readonly int $retries = 1,
@@ -74,7 +79,7 @@ class Client
         ?Transport $transport = null,
         protected readonly bool $enabled = true,
     ) {
-        $this->endpoint = rtrim($endpoint, '/');
+        $this->endpoint = rtrim($endpoint !== '' ? $endpoint : self::DEFAULT_ENDPOINT, '/');
         $this->transport = $transport ?? new CurlTransport;
         $this->onError = $onError === null ? null : Closure::fromCallable($onError);
 
@@ -168,7 +173,7 @@ class Client
 
             try {
                 $this->sendBatch($batch);
-            } catch (AnalyticsException $exception) {
+            } catch (TraceException $exception) {
                 $sent = false;
                 $this->report($exception, $batch);
             }
@@ -210,7 +215,7 @@ class Client
     /**
      * Check the key and get the settings of its property.
      *
-     * @throws AnalyticsException when the key is wrong or the API can't be reached.
+     * @throws TraceException when the key is wrong or the API can't be reached.
      */
     public function ping(): PropertySettings
     {
@@ -281,7 +286,7 @@ class Client
         return [
             'Authorization' => 'Bearer '.$this->key,
             'Accept' => 'application/json',
-            'User-Agent' => 'thepublicgood-analytics-php/'.self::VERSION,
+            'User-Agent' => 'thepublicgood-trace-php/'.self::VERSION,
         ];
     }
 
@@ -290,7 +295,7 @@ class Client
      *
      * @param  list<Event>  $batch
      */
-    protected function report(AnalyticsException $exception, array $batch): void
+    protected function report(TraceException $exception, array $batch): void
     {
         try {
             if ($this->onError !== null) {
@@ -299,7 +304,7 @@ class Client
                 return;
             }
 
-            error_log(sprintf('[analytics] Dropped %d event(s): %s', count($batch), $exception->getMessage()));
+            error_log(sprintf('[trace] Dropped %d event(s): %s', count($batch), $exception->getMessage()));
         } catch (Throwable) {
             // An error handler that throws must not break the app.
         }
