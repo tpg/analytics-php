@@ -1,6 +1,6 @@
 <?php
 
-namespace TPG\Analytics;
+namespace TPG\Trace;
 
 use DateTimeImmutable;
 use DateTimeInterface;

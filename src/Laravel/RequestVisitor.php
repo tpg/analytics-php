@@ -1,10 +1,10 @@
 <?php
 
-namespace TPG\Analytics\Laravel;
+namespace TPG\Trace\Laravel;
 
 use Illuminate\Http\Request;
-use TPG\Analytics\Visitor;
-use TPG\Analytics\VisitorCookie;
+use TPG\Trace\Visitor;
+use TPG\Trace\VisitorCookie;
 
 /**
  * Reads the visitor from a Laravel request.
@@ -14,7 +14,7 @@ final class RequestVisitor
     /**
      * The request attribute holding the visitor ID, including one the middleware just created.
      */
-    public const string ATTRIBUTE = 'analytics-client.visitor-id';
+    public const string ATTRIBUTE = 'trace-client.visitor-id';
 
     /**
      * Get the visitor making the request.

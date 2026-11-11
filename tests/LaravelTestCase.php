@@ -3,7 +3,7 @@
 namespace Tests;
 
 use Orchestra\Testbench\TestCase;
-use TPG\Analytics\Laravel\AnalyticsServiceProvider;
+use TPG\Trace\Laravel\TraceServiceProvider;
 
 abstract class LaravelTestCase extends TestCase
 {
@@ -12,13 +12,13 @@ abstract class LaravelTestCase extends TestCase
      */
     protected function getPackageProviders($app): array
     {
-        return [AnalyticsServiceProvider::class];
+        return [TraceServiceProvider::class];
     }
 
     protected function defineEnvironment($app): void
     {
-        $app['config']->set('analytics-client.key', 'ak_test');
-        $app['config']->set('analytics-client.endpoint', 'https://analytics.test/api/v1');
+        $app['config']->set('trace-client.key', 'ak_test');
+        $app['config']->set('trace-client.endpoint', 'https://trace.test/api/v1');
         $app['config']->set('cache.default', 'array');
     }
 }

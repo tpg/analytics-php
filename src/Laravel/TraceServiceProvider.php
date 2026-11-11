@@ -1,6 +1,6 @@
 <?php
 
-namespace TPG\Analytics\Laravel;
+namespace TPG\Trace\Laravel;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
@@ -11,35 +11,35 @@ use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
-use TPG\Analytics\Client;
-use TPG\Analytics\Exceptions\AnalyticsException;
-use TPG\Analytics\Transport\CurlTransport;
-use TPG\Analytics\Visitor;
-use TPG\Analytics\VisitorCookie;
+use TPG\Trace\Client;
+use TPG\Trace\Exceptions\TraceException;
+use TPG\Trace\Transport\CurlTransport;
+use TPG\Trace\Visitor;
+use TPG\Trace\VisitorCookie;
 
-class AnalyticsServiceProvider extends ServiceProvider
+class TraceServiceProvider extends ServiceProvider
 {
     /**
-     * Register the analytics client.
+     * Register the Trace client.
      *
      * The client is scoped, so long-running workers like Octane and queue workers get a fresh queue
      * for each request or job.
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../../config/analytics-client.php', 'analytics-client');
+        $this->mergeConfigFrom(__DIR__.'/../../config/trace-client.php', 'trace-client');
 
         $this->app->scoped(Client::class, function (Application $app) {
             /** @var array{key: ?string, endpoint: ?string, enabled: bool, identify_users: bool, verify_ssl: bool} $config */
-            $config = $app->make('config')->get('analytics-client');
+            $config = $app->make('config')->get('trace-client');
 
             $client = new Client(
                 key: (string) $config['key'],
-                endpoint: (string) $config['endpoint'],
+                endpoint: (string) $config['endpoint'] ?: Client::DEFAULT_ENDPOINT,
                 flushOnShutdown: false,
                 transport: new CurlTransport(verifySsl: $config['verify_ssl']),
-                onError: fn (AnalyticsException $exception, array $batch) => Log::warning('Analytics dropped '.count($batch).' event(s).', ['exception' => $exception]),
-                enabled: $config['enabled'] && filled($config['key']) && filled($config['endpoint']),
+                onError: fn (TraceException $exception, array $batch) => Log::warning('Trace dropped '.count($batch).' event(s).', ['exception' => $exception]),
+                enabled: $config['enabled'] && filled($config['key']),
             );
 
             return $client->resolveVisitorUsing(function () use ($app, $config): ?Visitor {
@@ -51,7 +51,7 @@ class AnalyticsServiceProvider extends ServiceProvider
             });
         });
 
-        $this->app->alias(Client::class, 'analytics-client');
+        $this->app->alias(Client::class, 'trace-client');
     }
 
     /**
@@ -61,8 +61,8 @@ class AnalyticsServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../../config/analytics-client.php' => config_path('analytics-client.php'),
-            ], 'analytics-client-config');
+                __DIR__.'/../../config/trace-client.php' => config_path('trace-client.php'),
+            ], 'trace-client-config');
         }
 
         EncryptCookies::except(VisitorCookie::DEFAULT_NAME);

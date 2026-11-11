@@ -1,6 +1,6 @@
 <?php
 
-namespace TPG\Analytics\Transport;
+namespace TPG\Trace\Transport;
 
 final readonly class Response
 {

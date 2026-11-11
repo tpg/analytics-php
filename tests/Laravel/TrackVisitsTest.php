@@ -3,11 +3,11 @@
 use Illuminate\Auth\GenericUser;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Route;
-use TPG\Analytics\Client;
-use TPG\Analytics\Laravel\Analytics;
-use TPG\Analytics\Laravel\TrackVisits;
-use TPG\Analytics\Transport\FakeTransport;
-use TPG\Analytics\Transport\Response;
+use TPG\Trace\Client;
+use TPG\Trace\Laravel\Trace;
+use TPG\Trace\Laravel\TrackVisits;
+use TPG\Trace\Transport\FakeTransport;
+use TPG\Trace\Transport\Response;
 
 /**
  * A ping response for a property with the given visitor identification.
@@ -29,7 +29,7 @@ beforeEach(function () {
         Route::get('/up', fn () => response('<h1>Up</h1>'));
         Route::get('/api/users/{user}', fn (string $user) => ['id' => $user]);
         Route::post('/signup', function () {
-            Analytics::event('signup', ['plan' => 'pro']);
+            Trace::event('signup', ['plan' => 'pro']);
 
             return response('<h1>Welcome</h1>');
         });
@@ -37,7 +37,7 @@ beforeEach(function () {
 });
 
 test('page views are recorded with the visitor', function () {
-    $transport = Analytics::fake(pingResponse());
+    $transport = Trace::fake(pingResponse());
 
     $this->withHeaders(['User-Agent' => 'Mozilla/5.0', 'Referer' => 'https://google.com/'])
         ->get('/pricing?utm_source=newsletter')
@@ -55,7 +55,7 @@ test('page views are recorded with the visitor', function () {
 });
 
 test('requests that are not page views are skipped', function (string $uri, array $headers) {
-    $transport = Analytics::fake(pingResponse());
+    $transport = Trace::fake(pingResponse());
 
     $this->withHeaders($headers)->get($uri);
 
@@ -69,8 +69,8 @@ test('requests that are not page views are skipped', function (string $uri, arra
 ]);
 
 test('API properties record every request with its route pattern', function () {
-    config(['analytics-client.track' => 'requests']);
-    $transport = Analytics::fake(pingResponse());
+    config(['trace-client.track' => 'requests']);
+    $transport = Trace::fake(pingResponse());
 
     $this->getJson('/api/users/7')->assertOk();
     $this->getJson('/missing')->assertNotFound();
@@ -89,7 +89,7 @@ test('API properties record every request with its route pattern', function () {
 });
 
 test('persistent properties give new visitors a cookie and recognise them afterwards', function () {
-    $transport = Analytics::fake(pingResponse('persistent'));
+    $transport = Trace::fake(pingResponse('persistent'));
 
     $response = $this->get('/pricing')->assertCookieNotExpired('_a_vid');
     $visitorId = $response->getCookie('_a_vid', decrypt: false)->getValue();
@@ -101,7 +101,7 @@ test('persistent properties give new visitors a cookie and recognise them afterw
 });
 
 test('the property settings are cached between requests', function () {
-    $transport = Analytics::fake(pingResponse('persistent'));
+    $transport = Trace::fake(pingResponse('persistent'));
 
     $this->get('/pricing');
     $this->get('/pricing');
@@ -110,8 +110,8 @@ test('the property settings are cached between requests', function () {
 });
 
 test('events tracked during a request belong to its visitor', function () {
-    config(['analytics-client.identify_users' => true]);
-    $transport = Analytics::fake(pingResponse());
+    config(['trace-client.identify_users' => true]);
+    $transport = Trace::fake(pingResponse());
 
     $this->actingAs(new GenericUser(['id' => 42]))
         ->withHeaders(['User-Agent' => 'Mozilla/5.0'])
@@ -130,8 +130,8 @@ test('events tracked during a request belong to its visitor', function () {
 });
 
 test('nothing is tracked without a key', function () {
-    config(['analytics-client.key' => null]);
-    $transport = Analytics::fake(pingResponse('persistent'));
+    config(['trace-client.key' => null]);
+    $transport = Trace::fake(pingResponse('persistent'));
 
     $this->get('/pricing')->assertCookieMissing('_a_vid');
 
@@ -145,7 +145,7 @@ test('events are sent when the request ran in a copy of the application, as unde
     $sandbox->instance(Container::class, $sandbox);
     $sandbox->instance(Client::class, new Client(
         key: 'ak_fake',
-        endpoint: 'https://analytics.invalid/api/v1',
+        endpoint: 'https://trace.invalid/api/v1',
         flushOnShutdown: false,
         transport: $transport,
     ));

@@ -1,8 +1,8 @@
 <?php
 
-namespace TPG\Analytics\Transport;
+namespace TPG\Trace\Transport;
 
-use TPG\Analytics\Exceptions\TransportException;
+use TPG\Trace\Exceptions\TransportException;
 
 final class CurlTransport implements Transport
 {
@@ -50,7 +50,7 @@ final class CurlTransport implements Transport
         $responseBody = curl_exec($handle);
 
         if ($responseBody === false) {
-            throw new TransportException('The analytics request failed: '.curl_error($handle));
+            throw new TransportException('The Trace request failed: '.curl_error($handle));
         }
 
         return new Response((int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE), (string) $responseBody);

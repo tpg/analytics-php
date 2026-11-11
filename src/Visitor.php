@@ -1,12 +1,12 @@
 <?php
 
-namespace TPG\Analytics;
+namespace TPG\Trace;
 
 /**
  * The person an event belongs to, as your server sees them.
  *
  * The IP address and user agent are only used to work out a location, a device and an anonymous hash.
- * Analytics never stores them.
+ * Trace never stores them.
  */
 final readonly class Visitor
 {
@@ -41,7 +41,7 @@ final readonly class Visitor
     /**
      * Get a copy of the visitor signed in as the given user.
      *
-     * Analytics hashes the ID before storing it, so a database ID is fine.
+     * Trace hashes the ID before storing it, so a database ID is fine.
      */
     public function withUserId(string|int|null $userId): self
     {

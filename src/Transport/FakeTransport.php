@@ -1,8 +1,8 @@
 <?php
 
-namespace TPG\Analytics\Transport;
+namespace TPG\Trace\Transport;
 
-use TPG\Analytics\Exceptions\TransportException;
+use TPG\Trace\Exceptions\TransportException;
 
 /**
  * Records requests instead of sending them, for your application's tests.

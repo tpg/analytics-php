@@ -1,6 +1,6 @@
 <?php
 
-namespace TPG\Analytics;
+namespace TPG\Trace;
 
 /**
  * How the property a key belongs to wants client libraries to behave, from the ping API.

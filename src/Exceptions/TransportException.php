@@ -1,11 +1,11 @@
 <?php
 
-namespace TPG\Analytics\Exceptions;
+namespace TPG\Trace\Exceptions;
 
 /**
  * The request never reached the API, or no response came back.
  */
-class TransportException extends AnalyticsException
+class TransportException extends TraceException
 {
     //
 }
